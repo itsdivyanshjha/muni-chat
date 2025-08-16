@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 213 27% 98%;
+    --foreground: 215 25% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+
+    --primary: 214 84% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 213 27% 94%;
+    --secondary-foreground: 215 25% 27%;
+
+    --muted: 213 27% 94%;
+    --muted-foreground: 215 13% 65%;
+
+    --accent: 213 31% 91%;
+    --accent-foreground: 215 25% 27%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 213 27% 88%;
+    --input: 213 27% 88%;
+    --ring: 214 84% 56%;
+
+    --radius: 0.75rem;
+
+    /* Municipal design tokens */
+    --municipal-blue: 214 84% 56%;
+    --municipal-blue-dark: 214 84% 46%;
+    --municipal-blue-light: 214 84% 66%;
+    --municipal-gray: 215 13% 65%;
+    --municipal-gray-light: 213 27% 94%;
+    
+    /* Gradients */
+    --gradient-municipal: linear-gradient(135deg, hsl(var(--municipal-blue)), hsl(var(--municipal-blue-dark)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--municipal-gray-light)));
+    
+    /* Shadows */
+    --shadow-card: 0 4px 12px -4px hsl(var(--municipal-blue) / 0.1);
+    --shadow-elevated: 0 8px 24px -8px hsl(var(--municipal-blue) / 0.15);
+    
+    /* Animation */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 215 28% 7%;
+    --foreground: 213 31% 91%;
+
+    --card: 215 28% 9%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 215 28% 9%;
+    --popover-foreground: 213 31% 91%;
+
+    --primary: 214 84% 66%;
+    --primary-foreground: 215 28% 9%;
+
+    --secondary: 215 28% 15%;
+    --secondary-foreground: 213 31% 91%;
+
+    --muted: 215 28% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 215 28% 15%;
+    --accent-foreground: 213 31% 91%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 213 31% 91%;
+
+    --border: 215 28% 15%;
+    --input: 215 28% 15%;
+    --ring: 214 84% 66%;
+
+    /* Dark mode municipal tokens */
+    --municipal-blue: 214 84% 66%;
+    --municipal-blue-dark: 214 84% 56%;
+    --municipal-blue-light: 214 84% 76%;
+    --municipal-gray: 215 20% 65%;
+    --municipal-gray-light: 215 28% 15%;
+    
+    --gradient-municipal: linear-gradient(135deg, hsl(var(--municipal-blue)), hsl(var(--municipal-blue-dark)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--municipal-gray-light)));
+    
+    --shadow-card: 0 4px 12px -4px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 8px 24px -8px hsl(0 0% 0% / 0.4);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: Inter, system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
