@@ -42,6 +42,11 @@ class OpenRouterClient:
     ) -> Dict[str, Any]:
         """Send a chat completion request to OpenRouter."""
         
+        # Log the request for debugging
+        logger.info(f"OpenRouter request - Model: {self.model_slug}")
+        logger.info(f"OpenRouter request - Messages count: {len(messages)}")
+        logger.info(f"OpenRouter request - Tools: {'Yes' if tools else 'No'}")
+        
         payload = {
             "model": self.model_slug,
             "messages": messages,
@@ -55,22 +60,33 @@ class OpenRouterClient:
                 payload["tool_choice"] = tool_choice
         
         try:
+            logger.info("Sending request to OpenRouter...")
             response = await self.client.post(
                 f"{self.base_url}/chat/completions",
                 json=payload
             )
-            response.raise_for_status()
+            
+            logger.info(f"OpenRouter response status: {response.status_code}")
+            
+            # Log response content for debugging
+            if response.status_code != 200:
+                error_content = response.text
+                logger.error(f"OpenRouter error response: {error_content}")
+                raise OpenRouterError(f"HTTP {response.status_code}: {error_content}")
             
             result = response.json()
+            logger.info("OpenRouter response received successfully")
             
             if "error" in result:
+                logger.error(f"OpenRouter API error: {result['error']}")
                 raise OpenRouterError(f"OpenRouter API error: {result['error']}")
             
             return result
             
         except httpx.HTTPStatusError as e:
-            logger.error(f"HTTP error calling OpenRouter: {e}")
-            raise OpenRouterError(f"HTTP error: {e.response.status_code}")
+            error_text = e.response.text if hasattr(e, 'response') else str(e)
+            logger.error(f"HTTP error calling OpenRouter: Status {e.response.status_code}, Body: {error_text}")
+            raise OpenRouterError(f"HTTP error {e.response.status_code}: {error_text}")
         except httpx.RequestError as e:
             logger.error(f"Request error calling OpenRouter: {e}")
             raise OpenRouterError(f"Request error: {e}")

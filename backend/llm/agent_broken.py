@@ -305,9 +305,9 @@ INSIGHT WRITING GUIDELINES:
                 logger, prompt, filters, sql_used, duration_ms, row_count, False, error_msg
             )
             
-            # Use query-specific response generation when LLM fails
-            logger.info("Generating query-specific response due to LLM failure...")
-            return self._create_query_specific_response(prompt, filters, error_msg)
+            # Just return a simple error - no fake responses
+            logger.error(f"LLM processing failed: {error_msg}")
+            raise Exception(f"LLM processing failed: {error_msg}")
 
     async def generate_insight(self, prompt: str, filters: Dict[str, Any]) -> Dict[str, Any]:
         """Alias for process_query for compatibility with app.py endpoint."""
@@ -350,23 +350,8 @@ INSIGHT WRITING GUIDELINES:
             "disclaimers": ["Error occurred during analysis"]
         }
     
-    def _create_query_specific_response(self, prompt: str, filters: Dict[str, Any], error: str) -> Dict[str, Any]:
-        """Create a response tailored to the specific query when LLM fails."""
-        prompt_lower = prompt.lower()
-        
-        # Determine query category and create relevant response
-        if any(term in prompt_lower for term in ['gdp', 'economic', 'growth', 'inflation', 'economy']):
-            return self._create_economic_response(prompt, filters)
-        elif any(term in prompt_lower for term in ['infrastructure', 'roads', 'pmgsy', 'development', 'construction']):
-            return self._create_infrastructure_response(prompt, filters)
-        elif any(term in prompt_lower for term in ['education', 'literacy', 'school', 'learning', 'social']):
-            return self._create_education_response(prompt, filters)
-        elif any(term in prompt_lower for term in ['environment', 'climate', 'temperature', 'co2', 'air quality']):
-            return self._create_environment_response(prompt, filters)
-        else:
-            return self._create_fallback_government_data_response(prompt, filters)
-    
-    def _create_economic_response(self, prompt: str, filters: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Create economic data response."""
         return {
             "insight_text": f"## Executive Summary\nBased on your query '{prompt}', here's an analysis of economic indicators from our government datasets.\n\n## Key Findings\n• **GDP Growth**: Current quarterly data shows varied growth patterns across sectors\n• **Inflation Trends**: Retail inflation rates indicate economic stability measures\n• **Fiscal Indicators**: Government spending and revenue data provides policy insights\n\n## Trend Analysis\nEconomic data reveals cyclical patterns with seasonal variations in key indicators. Growth metrics show resilience in post-pandemic recovery phases.\n\n## Notable Observations\n• Economic recovery patterns vary significantly by state and sector\n• Digital economy indicators show accelerated growth\n• Rural economic metrics demonstrate targeted policy impacts\n\n## Actionable Recommendations\n1. Monitor quarterly GDP trends for policy timing\n2. Analyze inflation data for market predictions\n3. Compare state-wise economic performance for resource allocation",

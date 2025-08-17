@@ -71,6 +71,36 @@ async def health_check():
     """Health check endpoint."""
     return {"ok": True, "version": "2.0.0", "features": ["insights", "government_datasets"]}
 
+@app.get("/api/test-llm")
+async def test_llm_connection():
+    """Test LLM connection and configuration."""
+    try:
+        from llm.openrouter import OpenRouterClient
+        from core.config import settings
+        
+        client = OpenRouterClient()
+        
+        # Simple test message
+        messages = [{"role": "user", "content": "Say 'Hello' if you can receive this message."}]
+        
+        response = await client.chat_completion(messages=messages)
+        
+        return {
+            "status": "success",
+            "model": settings.model_slug,
+            "api_key_configured": bool(settings.openrouter_api_key and settings.openrouter_api_key != "your_openrouter_api_key_here"),
+            "response_preview": response.get("choices", [{}])[0].get("message", {}).get("content", "")[:100] + "..."
+        }
+        
+    except Exception as e:
+        logger.error(f"LLM test failed: {e}")
+        return {
+            "status": "error", 
+            "error": str(e),
+            "model": getattr(settings, 'model_slug', 'not_configured'),
+            "api_key_configured": bool(getattr(settings, 'openrouter_api_key', None) and settings.openrouter_api_key != "your_openrouter_api_key_here")
+        }
+
 @app.get("/api/schema")
 async def get_schema():
     """Get sanitized database schema."""
