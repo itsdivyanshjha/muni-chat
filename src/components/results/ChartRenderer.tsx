@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Download, BarChart3, LineChart, PieChart, ScatterChart, TrendingUp, Activity, Expand, Palette } from 'lucide-react';
 import { VegaLiteSpec, DataPreview } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
+import { colors, chartColors } from '@/lib/colors';
 
 const chartTypes = [
   { value: 'auto', label: 'AI Generated', icon: TrendingUp, description: 'Let AI choose the best visualization' },
@@ -18,9 +19,9 @@ const chartTypes = [
 ];
 
 const colorSchemes = [
+  { value: 'municipal', label: 'Municipal', colors: chartColors.slice(0, 4) },
   { value: 'category10', label: 'Vibrant', colors: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'] },
   { value: 'set3', label: 'Pastel', colors: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072'] },
-  { value: 'dark2', label: 'Dark', colors: ['#1b9e77', '#d95f02', '#7570b3', '#e7298a'] },
   { value: 'tableau10', label: 'Professional', colors: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2'] }
 ];
 
@@ -32,7 +33,7 @@ interface ChartRendererProps {
 export function ChartRenderer({ spec, dataPreview }: ChartRendererProps) {
   const [processedSpec, setProcessedSpec] = useState<any>(null);
   const [selectedChart, setSelectedChart] = useState<string>('auto');
-  const [selectedColors, setSelectedColors] = useState<string>('category10');
+  const [selectedColors, setSelectedColors] = useState<string>('municipal');
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const generateCustomSpec = (chartType: string, data: any[]) => {
@@ -154,7 +155,22 @@ export function ChartRenderer({ spec, dataPreview }: ChartRendererProps) {
     const data = dataPreview.rows.map(row => {
       const obj: any = {};
       dataPreview.columns.forEach((col, index) => {
-        obj[col] = row[index];
+        // Handle numeric values properly for visualization
+        let value = row[index];
+        if (typeof value === 'string' && value.includes('₹')) {
+          // Extract numeric value from currency strings
+          const numMatch = value.match(/[\d,]+/);
+          if (numMatch) {
+            value = parseFloat(numMatch[0].replace(/,/g, ''));
+          }
+        } else if (typeof value === 'string' && value.includes('%')) {
+          // Extract numeric value from percentage strings
+          const numMatch = value.match(/[\d.]+/);
+          if (numMatch) {
+            value = parseFloat(numMatch[0]);
+          }
+        }
+        obj[col] = value;
       });
       return obj;
     });
@@ -227,12 +243,12 @@ export function ChartRenderer({ spec, dataPreview }: ChartRendererProps) {
   }
 
   return (
-    <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
-      <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+    <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-blue-50">
+      <CardHeader style={{ background: `linear-gradient(135deg, ${colors.federalBlue} 0%, ${colors.marianBlue} 50%, ${colors.honoluluBlue} 100%)` }} className="text-white">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Interactive Visualization
+            Visualization
           </CardTitle>
           
           <div className="flex flex-wrap items-center gap-3">

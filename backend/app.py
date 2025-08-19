@@ -126,6 +126,7 @@ async def get_schema():
 @app.post("/api/insights")
 async def generate_insight(request: InsightRequest):
     """Generate AI-powered insights from municipal data."""
+    logger.info(f"Received insight request: {request.prompt}")
     try:
         from llm.agent import MunicipalAnalystAgent
         
@@ -153,10 +154,12 @@ async def generate_insight(request: InsightRequest):
                 }
         
         # Generate insight using the LLM agent
+        logger.info(f"Calling agent with filters: {filters_dict}")
         insight_response = await agent.generate_insight(
             prompt=request.prompt,
             filters=filters_dict
         )
+        logger.info(f"Agent returned result: {type(insight_response)}")
         
         return insight_response
         
@@ -337,4 +340,4 @@ async def trigger_dataset_sync(slug: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

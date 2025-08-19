@@ -29,7 +29,7 @@ export function ChatInput({ onSend, isLoading = false, placeholder = "Ask a ques
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div className="relative">
         <Textarea
           value={message}
@@ -38,8 +38,8 @@ export function ChatInput({ onSend, isLoading = false, placeholder = "Ask a ques
           placeholder={placeholder}
           disabled={isLoading}
           className={cn(
-            "min-h-[100px] resize-none pr-12 shadow-card",
-            "focus:ring-2 focus:ring-primary/20"
+            "min-h-[80px] resize-none pr-12 text-sm border-gray-200",
+            "focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           )}
         />
         <Button
@@ -47,15 +47,15 @@ export function ChatInput({ onSend, isLoading = false, placeholder = "Ask a ques
           size="sm"
           disabled={!message.trim() || isLoading}
           className={cn(
-            "absolute bottom-3 right-3 h-8 w-8 bg-gradient-municipal hover:opacity-90",
+            "absolute bottom-2 right-2 h-7 w-7 bg-blue-600 hover:bg-blue-700",
             "disabled:opacity-50"
           )}
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-3 w-3" />
         </Button>
       </div>
-      <div className="text-xs text-muted-foreground">
-        Press <kbd className="px-1 py-0.5 bg-muted rounded">Enter</kbd> to send, <kbd className="px-1 py-0.5 bg-muted rounded">Shift + Enter</kbd> for new line
+      <div className="text-xs text-gray-500">
+        <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">↵</kbd> send • <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">⇧↵</kbd> new line
       </div>
     </form>
   );

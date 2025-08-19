@@ -21,7 +21,7 @@ services:
   backend:
     build: .
     ports:
-      - "8000:8000"
+      - "8080:8080"
     environment:
       - DATABASE_URL=postgresql+psycopg2://app_owner:owner_pass@db:5432/muni
       - RUNTIME_DB_URL=postgresql+psycopg2://app_readonly:readonly_pass@db:5432/muni
@@ -34,7 +34,7 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
 
 volumes:
   postgres_data:

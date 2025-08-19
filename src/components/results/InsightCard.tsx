@@ -9,6 +9,9 @@ interface InsightCardProps {
 
 export function InsightCard({ insight }: InsightCardProps) {
   const { insight_text, filters_applied, disclaimers } = insight;
+  
+  // Debug logging
+  console.log('InsightCard received:', { insight_text, filters_applied, disclaimers });
 
   // Parse the structured insight text
   const parseInsightText = (text: string) => {
@@ -20,8 +23,28 @@ export function InsightCard({ insight }: InsightCardProps) {
       recommendations: []
     };
 
+    // Handle case where text might be JSON or contain JSON
+    let cleanText = text;
+    
+    // If the text contains JSON, extract the insight_text field
+    if (text.includes('{') && text.includes('}')) {
+      try {
+        // Try to find and parse JSON in the text
+        const jsonMatch = text.match(/\{.*\}/s);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (parsed.insight_text) {
+            cleanText = parsed.insight_text;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse JSON in insight text:', e);
+        // Fall back to original text
+      }
+    }
+
     // Simple parsing - in a real app, you'd want more robust parsing
-    const lines = text.split('\n').filter(line => line.trim());
+    const lines = cleanText.split('\n').filter(line => line.trim());
     let currentSection = 'summary';
     
     lines.forEach(line => {

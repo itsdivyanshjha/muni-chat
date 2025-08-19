@@ -47,7 +47,7 @@ export function FilterBar() {
     filters.extra.category;
 
   return (
-    <div className="sticky top-16 z-10 bg-background/95 backdrop-blur border-b p-4 space-y-4">
+    <div className="sticky top-16 z-10 bg-background/95 backdrop-blur border-b px-4 py-2 space-y-2">
       <div className="flex flex-wrap items-center gap-4">
         {/* Date Range */}
         <div className="flex items-center gap-2">

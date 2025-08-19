@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
+# Municipal Chat App
 
-## Project info
+A modern web application that provides AI-powered insights and analytics for municipal datasets through natural language queries.
 
-**URL**: https://lovable.dev/projects/b8a49d8c-322f-4fd5-aeea-cf95d6cfe827
+## Project Overview
 
-## How can I edit this code?
+This application allows users to ask questions about municipal data in plain English and receive intelligent responses with data visualizations. It features a React frontend with a FastAPI backend that processes natural language queries and generates insights from municipal datasets.
 
-There are several ways of editing your application.
+## Architecture
 
-**Use Lovable**
+- **Frontend**: React + TypeScript + Vite + Tailwind CSS + shadcn/ui
+- **Backend**: FastAPI + PostgreSQL + Alembic
+- **AI**: OpenRouter API integration for natural language processing
+- **Data**: Star schema database design for municipal indicators
+- **Containerization**: Docker and Docker Compose ready
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b8a49d8c-322f-4fd5-aeea-cf95d6cfe827) and start prompting.
+## File Structure
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+muni-chat/
+├── src/                    # React frontend source code
+├── backend/               # FastAPI backend application
+├── public/                # Static assets
+├── package.json           # Frontend dependencies
+├── docker-compose.yml     # Docker services configuration
+└── README.md             # This file
 ```
 
-**Edit a file directly in GitHub**
+## Quick Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
 
-**Use GitHub Codespaces**
+- Node.js 18+ and npm
+- Python 3.8+ and pip
+- Docker and Docker Compose
+- OpenRouter API key
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Backend Setup
 
-## What technologies are used for this project?
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend
+   ```
 
-This project is built with:
+2. **Set up environment:**
+   ```bash
+   cp env.example .env
+   # Edit .env and add your OPENROUTER_API_KEY
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+3. **Start services:**
+   ```bash
+   docker-compose up -d
+   ```
 
-## How can I deploy this project?
+4. **Run migrations:**
+   ```bash
+   pip install -r requirements.txt
+   alembic upgrade head
+   python seed_data.py
+   ```
 
-Simply open [Lovable](https://lovable.dev/projects/b8a49d8c-322f-4fd5-aeea-cf95d6cfe827) and click on Share -> Publish.
+### Frontend Setup
 
-## Can I connect a custom domain to my Lovable project?
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-Yes, you can!
+2. **Start development server:**
+   ```bash
+   npm run dev
+   ```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+3. **Build for production:**
+   ```bash
+   npm run build
+   ```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Running the Application
+
+- **Backend**: http://localhost:8080
+- **Frontend**: http://localhost:8081
+- **Database**: PostgreSQL on port 5432
+
+## Docker
+
+Use Docker Compose for easy setup:
+
+```bash
+docker-compose up -d
+```
+
+This starts all services including PostgreSQL database and FastAPI backend.
+
+## API Endpoints
+
+- `POST /api/insights` - Generate insights from natural language
+- `GET /api/schema` - Get database schema
+- `GET /api/datasets` - List available datasets
+- `GET /healthz` - Health check
+
+## Development
+
+- Backend development server: `uvicorn app:app --reload --host 0.0.0.0 --port 8080`
+- Frontend development server: `npm run dev`
+- Database migrations: `alembic upgrade head`

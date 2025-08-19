@@ -31,6 +31,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Pydantic models for insights
+class TimeFilter(BaseModel):
+    from_: str
+    to: str
+
+class PlaceFilter(BaseModel):
+    state: Optional[str] = None
+    district: Optional[str] = None
+    ward: Optional[str] = None
+    zone: Optional[str] = None
+
+class ExtraFilter(BaseModel):
+    category: Optional[str] = None
+
+class InsightFilters(BaseModel):
+    time: Optional[TimeFilter] = None
+    place: Optional[PlaceFilter] = None
+    extra: Optional[ExtraFilter] = None
+
+class InsightRequest(BaseModel):
+    prompt: str
+    filters: Optional[InsightFilters] = None
+
 # Pydantic models for government datasets
 class DatasetFilter(BaseModel):
     geo_id: Optional[int] = None
@@ -71,32 +94,45 @@ async def get_schema():
         raise HTTPException(status_code=500, detail="Failed to retrieve schema")
 
 @app.post("/api/insights")
-async def generate_insight(prompt: str, filters: Dict[str, Any] = None):
+async def generate_insight(request: InsightRequest):
     """Generate AI-powered insights from municipal data."""
     try:
-        # Enhanced insight service would integrate with government datasets
-        return {
-            "insight_text": "Enhanced insights with government datasets support",
-            "sql_used": "SELECT * FROM extended_fact_measure WHERE dataset_id = X",
-            "data_preview": {
-                "columns": ["indicator", "geography", "time_period", "value"],
-                "rows": [["GDP Growth", "Jharkhand", "2023", "7.2%"]]
-            },
-            "viz": {
-                "mark": "line",
-                "encoding": {
-                    "x": {"field": "time_period", "type": "temporal"},
-                    "y": {"field": "value", "type": "quantitative"}
-                },
-                "data": {"values": "__INLINE_DATA__"}
-            },
-            "doc_citations": ["Government of India Data Portal"],
-            "filters_applied": filters or {},
-            "disclaimers": ["Data sourced from official government APIs"]
-        }
+        from llm.agent import MunicipalAnalystAgent
+        
+        # Initialize the LLM agent
+        agent = MunicipalAnalystAgent()
+        
+        # Convert filters to the format expected by the agent
+        filters_dict = {}
+        if request.filters:
+            if request.filters.time:
+                filters_dict["time"] = {
+                    "from": request.filters.time.from_,
+                    "to": request.filters.time.to
+                }
+            if request.filters.place:
+                filters_dict["place"] = {
+                    "state": request.filters.place.state,
+                    "district": request.filters.place.district,
+                    "ward": request.filters.place.ward,
+                    "zone": request.filters.place.zone
+                }
+            if request.filters.extra:
+                filters_dict["extra"] = {
+                    "category": request.filters.extra.category
+                }
+        
+        # Generate insight using the LLM agent
+        insight_response = await agent.generate_insight(
+            prompt=request.prompt,
+            filters=filters_dict
+        )
+        
+        return insight_response
+        
     except Exception as e:
         logger.error(f"Error generating insight: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate insight")
+        raise HTTPException(status_code=500, detail=f"Failed to generate insight: {str(e)}")
 
 # New Government Dataset endpoints
 @app.get("/api/datasets")
@@ -271,4 +307,4 @@ async def trigger_dataset_sync(slug: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
